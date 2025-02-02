@@ -1,0 +1,38 @@
+name: Lint & Format
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  lint-format:
+    name: Run ESLint & Prettier
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+
+      - name: 📦 Configurar Node.js y pnpm
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: 🛠️ Instalar pnpm
+        run: npm install -g pnpm
+
+      - name: 📦 Instalar dependencias
+        run: pnpm install
+
+      - name: 🔍 Ejecutar ESLint (Lint)
+        run: pnpm -r run lint
+
+      - name: 🧹 Ejecutar Prettier (Format)
+        run: pnpm -r run format
