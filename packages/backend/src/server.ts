@@ -1,4 +1,7 @@
 import Fastify from "fastify";
+import { formatTitle } from "@whatdamnanimewatch/shared";
+
+console.log(formatTitle("¡Bienvenido!"));
 
 const fastify = Fastify({ logger: true });
 

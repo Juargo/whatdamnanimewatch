@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import './Counter.css';
 
+import { formatTitle } from "@whatdamnanimewatch/shared";
+console.log(formatTitle("Frontend funcionando!"));
+
 export default function Counter({
 	children,
 	count: initialCount,
