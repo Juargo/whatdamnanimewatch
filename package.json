@@ -4,12 +4,12 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "scripts": {
-    "dev": "pnpm -r run dev --parallel",
-    "build": "pnpm -r run build --parallel",
-    "test": "pnpm -r run test",
-    "lint": "pnpm -r run lint",
-    "format": "pnpm -r run format"
+"scripts": {
+"dev": "pnpm -r run dev --parallel",
+"build": "pnpm -r run build --parallel",
+"test": "pnpm -r run test",
+"lint": "pnpm -r run lint",
+"format": "pnpm -r run format"
   },
   "keywords": [],
   "author": "Ju4rgo",
