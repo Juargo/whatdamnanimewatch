@@ -19,7 +19,7 @@ jobs:
       - name: 📥 Checkout código
         uses: actions/checkout@v4
 
-      - name: 📦 Configurar Node.js y pnpm
+      - name: 📦 Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -27,6 +27,9 @@ jobs:
 
       - name: 🛠️ Instalar `pnpm`
         run: npm install -g pnpm
+
+      - name: 🔍 Verificar instalación de `pnpm`
+        run: pnpm -v
 
       - name: 📦 Instalar dependencias
         run: pnpm install
