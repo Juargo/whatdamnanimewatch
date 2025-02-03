@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # Permite ejecutar el workflow manualmente
+  workflow_dispatch: # Permite ejecución manual desde GitHub Actions
 
 jobs:
   release:
@@ -24,5 +24,6 @@ jobs:
       - name: 🔍 Ejecutar `release-please` en el monorepo
         uses: google-github-actions/release-please-action@v3
         with:
+          release-type: node
           config-file: .release-please-config.json
           token: ${{ secrets.GITHUB_TOKEN }}
