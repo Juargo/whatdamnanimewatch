@@ -4,12 +4,12 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-"scripts": {
-"dev": "pnpm -r run dev --parallel",
-"build": "pnpm -r run build --parallel",
-"test": "pnpm -r run test",
-"lint": "pnpm -r run lint",
-"format": "pnpm -r run format"
+  "scripts": {
+    "dev": "pnpm -r run dev --parallel",
+    "build": "pnpm -r run build --parallel",
+    "test": "pnpm -r run test",
+    "lint": "pnpm -r run lint",
+    "format": "pnpm -r run format"
   },
   "keywords": [],
   "author": "Ju4rgo",
@@ -25,11 +25,14 @@
     "eslint-plugin-prettier": "^5.2.3",
     "globals": "^15.14.0",
     "prettier": "^3.4.2",
+    "release-please": "^16.15.0",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.3",
-    "typescript-eslint-parser": "^22.0.0"
+    "typescript": "^5.7.3"
   },
   "dependencies": {
     "prettier-plugin-astro": "^0.14.1"
+  },
+  "overrides": {
+    "semver": "^5.7.2"
   }
 }

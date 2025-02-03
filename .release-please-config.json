@@ -1,0 +1,15 @@
+{
+  "release-type": "node",
+  "packages": {
+    "packages/frontend": {
+      "component": "frontend"
+    },
+    "packages/backend": {
+      "component": "backend"
+    },
+    "packages/shared": {
+      "component": "shared"
+    }
+  },
+  "monorepo-tags": true
+}

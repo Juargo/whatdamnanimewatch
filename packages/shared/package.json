@@ -1,8 +1,8 @@
 {
-    "name": "@whatdamnanimewatch/shared",
-    "version": "1.0.0",
-    "main": "index.ts",
-    "exports": {
-      ".": "./index.ts"
-    }
+  "name": "@whatdamnanimewatch/shared",
+  "version": "0.0.1",
+  "main": "index.ts",
+  "exports": {
+    ".": "./index.ts"
+  }
 }
