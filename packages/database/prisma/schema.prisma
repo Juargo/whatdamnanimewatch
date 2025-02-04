@@ -1,6 +1,7 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 generator client {
   provider = "prisma-client-js"
-  output   = "../../node_modules/.prisma"
 }
 
 datasource db {
@@ -9,8 +10,14 @@ datasource db {
 }
 
 model Anime {
-  id          String  @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
+  type        String?
+  genres      String? // Se puede almacenar como string separado por comas
+  demographic String?
+  year        Int?
+  status      String?
+  score       Float?
   openingUrl  String?
   endingUrl   String?
   createdAt   DateTime @default(now())
