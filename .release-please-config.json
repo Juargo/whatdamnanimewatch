@@ -1,14 +1,25 @@
 {
   "release-type": "node",
   "packages": {
-    "packages/frontend": {
+    "apps/frontend": {
+      "release-type": "node",
       "component": "frontend"
     },
-    "packages/backend": {
+    "apps/backend": {
+      "release-type": "node",
       "component": "backend"
     },
     "packages/shared": {
+      "release-type": "node",
       "component": "shared"
+    },
+    "packages/ui": {
+      "release-type": "node",
+      "component": "ui"
+    },
+    "packages/database": {
+      "release-type": "node",
+      "component": "database"
     }
   },
   "monorepo-tags": true

@@ -1,4 +1,6 @@
 packages:
-  - "packages/frontend"
-  - "packages/backend"
-  - "packages/shared"
+  - 'apps/frontend'
+  - 'apps/backend'
+  - 'packages/shared'
+  - 'packages/ui'
+  - 'packages/database'

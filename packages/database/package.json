@@ -1,0 +1,13 @@
+{
+  "name": "@whatdamnanimewatch/database",
+  "version": "0.0.1",
+  "scripts": {
+    "migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.8.0"
+  },
+  "devDependencies": {
+    "prisma": "^4.8.0"
+  }
+}
