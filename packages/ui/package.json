@@ -1,0 +1,26 @@
+{
+"name": "@whatdamnanimewatch/ui",
+"version": "0.1.0",
+"private": true,
+"main": "./dist/index.js",
+"module": "./dist/index.mjs",
+"types": "./dist/index.d.ts",
+"sideEffects": false,
+"scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint . --ext .ts,.tsx",
+    "clean": "rm -rf dist"
+},
+"peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+},
+"devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "tsup": "^7.0.0",
+    "typescript": "^5.0.0"
+}
+}
+
