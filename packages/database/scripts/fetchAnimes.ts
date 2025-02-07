@@ -1,87 +1,20 @@
 // import { PrismaClient } from '@whatdamnanimewatch/database' // Asegúrate que este import es correcto
 import axios, { AxiosResponse } from 'axios'
+import { AnimeRes, MyAnimeBase, Pagination } from '../myanimelist-model'
 
 // const prisma = new PrismaClient()
 
-const YEAR = 2024 // Cambia esto por el año deseado
-
-interface AnimeRes {
-  mal_id: number
-  url: string
-  titles: {
-    type: string
-    title: string
-  }[]
-  images: {
-    jpg: {
-      image_url: string
-    }
-
-    webp: {
-      image_url: string
-      small_image_url: string
-      large_image_url: string
-    }
-  }
-  type: string
-  episodes: number
-  status: string
-  score: number
-  synopsis: string
-  year: number
-  genres: {
-    mal_id: number
-    type: string
-    name: string
-    url: string
-  }[]
-  explicit_genres: {
-    mal_id: number
-    type: string
-    name: string
-    url: string
-  }[]
-  demographics: {
-    mal_id: number
-    type: string
-    name: string
-    url: string
-  }[]
-}
-
-interface Pagination {
-  last_visible_page: number
-  has_next_page: boolean
-  current_page: number
-}
-
-interface MyAnimeBase {
-  mal_id: number
-  url: string
-  title: string
-  image: string
-  type: string
-  episodes: number
-  status: string
-  score: number
-  synopsis: string
-  year: number
-  genres: string[]
-  demographics: string[]
-}
-
 // 🎯 Obtener animes desde Jikan API filtrando por año
-async function fetchAnimesByYear(year: number) {
-  console.log(`📥 Obteniendo datos de animes del año ${year} desde Jikan API...`)
-
+async function fetchAnimesByYear() {
   try {
-    const response: AxiosResponse<{ data: AnimeRes[] }> = await axios.get<{
+    const response: AxiosResponse<{ data: AnimeRes[]; pagination: Pagination }> = await axios.get<{
       data: AnimeRes[]
       pagination: Pagination
-    }>(
-      'https://api.jikan.moe/v4/anime?start_date=' + year + '-01-01&end_date=' + year + '-12-31',
-      {}
-    )
+    }>('https://api.jikan.moe/v4/anime?type=tv', {})
+
+    const current_page = response.data.pagination.current_page
+    const has_next_page = response.data.pagination.has_next_page
+    const last_visible_page = response.data.pagination.last_visible_page
 
     const an: MyAnimeBase[] = response.data.data.map((a: AnimeRes) => {
       return {
@@ -97,6 +30,11 @@ async function fetchAnimesByYear(year: number) {
         year: a.year,
         genres: a.genres.map((g) => g.name),
         demographics: a.demographics.map((d) => d.name),
+        pagination: {
+          current_page: current_page,
+          has_next_page: has_next_page,
+          last_visible_page: last_visible_page,
+        },
       }
     })
 
@@ -112,7 +50,7 @@ async function fetchAnimesByYear(year: number) {
 async function insertAnimes() {
   console.log('📥 Poblando base de datos...')
 
-  const animes = await fetchAnimesByYear(YEAR)
+  const animes = await fetchAnimesByYear()
 
   if (animes.length === 0) {
     console.log('❌ No se encontraron animes para insertar.')
