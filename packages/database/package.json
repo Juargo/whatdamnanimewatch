@@ -2,12 +2,15 @@
   "name": "@whatdamnanimewatch/database",
   "version": "0.0.1",
   "scripts": {
-    "migrate": "prisma migrate dev"
+    "migrate": "prisma migrate dev",
+    "fetch-animes": "tsx scripts/fetchAnimes.ts"
   },
   "dependencies": {
-    "@prisma/client": "^4.16.2"
+    "@prisma/client": "^4.16.2",
+    "axios": "^1.7.9"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.4",
     "prisma": "^4.16.2"
   }
 }
