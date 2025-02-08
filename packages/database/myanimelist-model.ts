@@ -48,7 +48,7 @@ export interface Pagination {
   current_page: number
 }
 
-export interface MyAnimeBase {
+export interface MyAnimeData {
   mal_id: number
   url: string
   title: string
@@ -59,7 +59,6 @@ export interface MyAnimeBase {
   score: number
   synopsis: string
   year: number
-  genres: string[]
-  demographics: string[]
-  pagination: Pagination
+  genres: string
+  demographics: string
 }

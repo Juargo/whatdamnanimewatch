@@ -11,7 +11,7 @@ datasource db {
 
 model Anime {
   id           String   @id @default(uuid())
-  mal_id       Int?
+  mal_id       Int?     @unique
   url          String?
   title        String
   image        String   @default("")
