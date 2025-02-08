@@ -10,15 +10,19 @@ datasource db {
 }
 
 model Anime {
-  id          String   @id @default(uuid())
-  title       String
-  type        String?
-  genres      String? // Se puede almacenar como string separado por comas
-  demographic String?
-  year        Int?
-  status      String?
-  score       Float?
-  openingUrl  String?
-  endingUrl   String?
-  createdAt   DateTime @default(now())
+  id           String   @id @default(uuid())
+  mal_id       Int?     @unique
+  url          String?
+  title        String
+  image        String   @default("")
+  type         String
+  episodes     Int      @default(0)
+  status       String
+  score        Float    @default(0.0)
+  synopsis     String   @default("")
+  year         Int
+  genres       String   @default("")
+  demographics String   @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
