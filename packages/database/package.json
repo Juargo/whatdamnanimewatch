@@ -6,11 +6,11 @@
     "fetch-animes": "tsx scripts/fetchAnimes.ts"
   },
   "dependencies": {
-    "@prisma/client": "^4.16.2",
+    "@prisma/client": "^6.3.1",
     "axios": "^1.7.9"
   },
   "devDependencies": {
     "@types/axios": "^0.14.4",
-    "prisma": "^4.16.2"
+    "prisma": "^6.3.1"
   }
 }

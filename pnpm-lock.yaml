@@ -122,8 +122,8 @@ importers:
   packages/database:
     dependencies:
       '@prisma/client':
-        specifier: ^4.16.2
-        version: 4.16.2(prisma@4.16.2)
+        specifier: ^6.3.1
+        version: 6.3.1(prisma@6.3.1(typescript@5.7.3))(typescript@5.7.3)
       axios:
         specifier: ^1.7.9
         version: 1.7.9
@@ -132,8 +132,8 @@ importers:
         specifier: ^0.14.4
         version: 0.14.4
       prisma:
-        specifier: ^4.16.2
-        version: 4.16.2
+        specifier: ^6.3.1
+        version: 6.3.1(typescript@5.7.3)
 
   packages/shared: {}
 
@@ -1038,9 +1038,6 @@ packages:
 
   '@prisma/engines-version@6.3.0-17.acc0b9dd43eb689cbd20c9470515d719db10d0b0':
     resolution: {integrity: sha512-R/ZcMuaWZT2UBmgX3Ko6PAV3f8//ZzsjRIG1eKqp3f2rqEqVtCv+mtzuH2rBPUC9ujJ5kCb9wwpxeyCkLcHVyA==}
-
-  '@prisma/engines@4.16.2':
-    resolution: {integrity: sha512-vx1nxVvN4QeT/cepQce68deh/Turxy5Mr+4L4zClFuK1GlxN3+ivxfuv+ej/gvidWn1cE1uAhW7ALLNlYbRUAw==}
 
   '@prisma/engines@6.3.1':
     resolution: {integrity: sha512-sXdqEVLyGAJ5/iUoG/Ea5AdHMN71m6PzMBWRQnLmhhOejzqAaEr8rUd623ql6OJpED4s/U4vIn4dg1qkF7vGag==}
@@ -2955,11 +2952,6 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
-  prisma@4.16.2:
-    resolution: {integrity: sha512-SYCsBvDf0/7XSJyf2cHTLjLeTLVXYfqp7pG5eEVafFLeT0u/hLFz/9W196nDRGUOo1JfPatAEb+uEnTQImQC1g==}
-    engines: {node: '>=14.17'}
-    hasBin: true
-
   prisma@6.3.1:
     resolution: {integrity: sha512-JKCZWvBC3enxk51tY4TWzS4b5iRt4sSU1uHn2I183giZTvonXaQonzVtjLzpOHE7qu9MxY510kAtFGJwryKe3Q==}
     engines: {node: '>=18.18'}
@@ -4548,12 +4540,6 @@ snapshots:
 
   '@pkgr/core@0.1.1': {}
 
-  '@prisma/client@4.16.2(prisma@4.16.2)':
-    dependencies:
-      '@prisma/engines-version': 4.16.1-1.4bc8b6e1b66cb932731fb1bdbbc550d1e010de81
-    optionalDependencies:
-      prisma: 4.16.2
-
   '@prisma/client@4.16.2(prisma@6.3.1(typescript@5.7.3))':
     dependencies:
       '@prisma/engines-version': 4.16.1-1.4bc8b6e1b66cb932731fb1bdbbc550d1e010de81
@@ -4570,8 +4556,6 @@ snapshots:
   '@prisma/engines-version@4.16.1-1.4bc8b6e1b66cb932731fb1bdbbc550d1e010de81': {}
 
   '@prisma/engines-version@6.3.0-17.acc0b9dd43eb689cbd20c9470515d719db10d0b0': {}
-
-  '@prisma/engines@4.16.2': {}
 
   '@prisma/engines@6.3.1':
     dependencies:
@@ -6862,10 +6846,6 @@ snapshots:
       sass-formatter: 0.7.9
 
   prettier@3.4.2: {}
-
-  prisma@4.16.2:
-    dependencies:
-      '@prisma/engines': 4.16.2
 
   prisma@6.3.1(typescript@5.7.3):
     dependencies:
