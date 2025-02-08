@@ -20,7 +20,7 @@ const AnimeList: React.FC = () => {
     const fetchAnimes = async () => {
       console.log('Fetching animes...')
       try {
-        const response = await fetch('http://localhost:3000/api/animes?page=1&limit=1000')
+        const response = await fetch('http://localhost:3000/api/animes?page=1&limit=2000')
         const data = await response.json()
         console.log('Animes obtenidos:', data)
         setAnimes(data)

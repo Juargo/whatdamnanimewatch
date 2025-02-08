@@ -6,7 +6,7 @@ import { AnimeRes, MyAnimeData, Pagination } from '../myanimelist-model'
 
 const prisma = new PrismaClient()
 
-const API_BASE_URL = 'https://api.jikan.moe/v4/anime?type=tv'
+const API_BASE_URL = 'https://api.jikan.moe/v4/anime?'
 
 // 🔹 Límite de concurrencia: 3 solicitudes por segundo
 const limit = pLimit(3)
@@ -28,7 +28,7 @@ async function fetchAnimesByPage(
     console.log(`📌 Solicitando página ${page}...`)
 
     // Espera para cumplir con las restricciones de la API
-    await sleep(350)
+    await sleep(550)
 
     // FETCH ANIME DATA
     const response: AxiosResponse<{ data: AnimeRes[]; pagination: Pagination }> = await axios.get<{
