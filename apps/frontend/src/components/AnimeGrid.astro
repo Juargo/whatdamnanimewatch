@@ -1,0 +1,29 @@
+---
+import AnimeCard from './AnimeCard.astro';
+
+const animes = [
+  {
+    id: 1,
+    title: "Attack on Titan",
+    image: "https://placehold.co/150x200",
+    score: 9.2,
+    type: "TV",
+    year: 2013,
+    status: "Finished"
+  },
+  {
+    id: 2,
+    title: "One Piece",
+    image: "https://placehold.co/150x200",
+    score: 8.9,
+    type: "TV",
+    year: 1999,
+    status: "Airing"
+  }
+];
+---
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-blue-100 rounded-lg shadow-lg">
+  {animes.map((anime) => (
+    <AnimeCard {...anime} />
+  ))}
+</div>
