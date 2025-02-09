@@ -131,3 +131,5 @@ dist
 
 ssh
 ssh.pub
+
+.env

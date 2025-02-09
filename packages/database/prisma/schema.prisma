@@ -14,6 +14,7 @@ model Anime {
   mal_id       Int?     @unique
   url          String?
   title        String
+  franchise    String?
   image        String   @default("")
   type         String
   episodes     Int      @default(0)

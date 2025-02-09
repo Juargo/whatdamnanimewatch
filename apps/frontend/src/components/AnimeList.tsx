@@ -43,7 +43,9 @@ const AnimeList: React.FC = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-3 p-4">
       {animes?.data?.length > 0 ? (
-        animes.data.map((anime) => <AnimeCard key={anime.mal_id} {...anime} />)
+        animes.data
+          .filter((anime) => anime.status !== 'Not yet aired')
+          .map((anime) => <AnimeCard key={anime.mal_id} {...anime} />)
       ) : (
         <p>No se encontraron animes.</p>
       )}

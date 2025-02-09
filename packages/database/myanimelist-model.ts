@@ -52,6 +52,7 @@ export interface MyAnimeData {
   mal_id: number
   url: string
   title: string
+  franchise: string
   image: string
   type: string
   episodes: number
