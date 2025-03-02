@@ -1,6 +1,8 @@
 packages:
-  - 'apps/frontend'
-  - 'apps/backend'
-  - 'packages/shared'
-  - 'packages/ui'
-  - 'packages/database'
+  - apps/frontend
+  - apps/backend
+  - packages/shared
+  - packages/ui
+  - packages/database
+onlyBuiltDependencies:
+  - '@prisma/client'

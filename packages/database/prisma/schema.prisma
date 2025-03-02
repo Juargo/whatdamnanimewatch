@@ -62,7 +62,7 @@ model Anime {
 
 model Franquicia {
   id_franquicia Int     @id @default(autoincrement())
-  nombre        String
+  nombre        String  @unique
   descripcion   String?
 
   // Ejemplo: si quieres enlazar animes que pertenecen a una franquicia
@@ -71,7 +71,7 @@ model Franquicia {
 
 model Genero {
   id_genero   Int     @id @default(autoincrement())
-  nombre      String
+  nombre      String  @unique
   descripcion String?
 
   animes AnimeGenero[] // Relación muchos-a-muchos (vía tabla puente)
@@ -79,7 +79,7 @@ model Genero {
 
 model Demografia {
   id_demografia Int     @id @default(autoincrement())
-  nombre        String
+  nombre        String  @unique
   descripcion   String?
 
   animes AnimeDemografia[] // Relación muchos-a-muchos o 1-a-muchos
@@ -87,7 +87,7 @@ model Demografia {
 
 model Pais {
   id_pais Int    @id @default(autoincrement())
-  nombre  String
+  nombre  String @unique
 
   animes AnimePais[] // Opposite relation field
 }

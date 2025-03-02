@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
-import { PrismaClient, Prisma } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
+// import { PrismaClientKnownRequestError } from '@prisma/client'
 import pLimit from 'p-limit'
 import OpenAI from 'openai'
 import * as dotenv from 'dotenv'
@@ -215,8 +216,9 @@ async function fetchAndInsertAnimes() {
             })
           }
         } catch (error) {
-          if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          if (error instanceof prisma.PrismaClientKnownRequestError) {
             // P2002 = Unique constraint failed
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if (error.code === 'P2002') {
               console.error(
                 `❌ Se detectó un registro duplicado en mal_id: ${anime.mal_id}. Saltando...`
