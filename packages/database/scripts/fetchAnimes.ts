@@ -30,8 +30,9 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 async function getFranchisesBatch(animes: MyAnimeData[]): Promise<Record<string, string>> {
   await sleep(500)
-  const titles = animes.map((a) => `"${a.title}"`).join(', ')
-  const prompt = `Dado estos animes: ${titles}, dime solo el nombre de la franquicia a la que pertenecen, como "Naruto", "Dragon Ball", "One Piece". Si no pertenecen a ninguna, responde "Standalone". Devuelve un JSON con el formato {"animeTitle1": "Franchise1", "animeTitle2": "Franchise2"}`
+  // Usar mal_id como identificador único para cada anime
+  const animeDetails = animes.map((a) => `{"title": "${a.title}", "id": ${a.mal_id}}`).join(', ')
+  const prompt = `Dado estos animes: [${animeDetails}], dime solo el nombre de la franquicia a la que pertenecen, como \"Naruto\", \"Dragon Ball\", \"One Piece\". Si no pertenecen a ninguna, responde \"Standalone\". Devuelve un JSON con el formato {\"animeTitle1\": \"Franchise1\", \"animeTitle2\": \"Franchise2\"}`
 
   try {
     const completion = await openai.chat.completions.create({
@@ -110,6 +111,10 @@ async function fetchAndInsertAnimes() {
     '🔍 OpenAI API Key:',
     process.env.OPENAI_API_KEY ? 'Cargado correctamente' : 'No encontrado'
   )
+
+  // Conjunto global para rastrear todos los mal_ids procesados en la sesión
+  const processedGlobalMalIds = new Set<number>()
+
   let page = 1065
   let hasNextPage = true
   let totalPages = 1
@@ -129,29 +134,68 @@ async function fetchAndInsertAnimes() {
     }
 
     for (let i = 0; i < animes.length; i += 10) {
-      console.log(`📌 Obteniendo franquicias para el lote ${i + 1}-${i + 10}...`)
-      const batch = animes.slice(i, i + 10)
+      console.log(
+        `📌 Obteniendo franquicias para el lote ${i + 1}-${Math.min(i + 10, animes.length)}...`
+      )
+
+      // Filtrar duplicados por mal_id antes de procesar el lote
+      const batch = animes.slice(i, i + 10).filter((anime) => {
+        if (processedGlobalMalIds.has(anime.mal_id)) {
+          console.warn(
+            `⚠️ Anime duplicado con mal_id ${anime.mal_id} detectado en datos fuente. Saltando...`
+          )
+          return false
+        }
+        processedGlobalMalIds.add(anime.mal_id)
+        return true
+      })
+
+      // Si todos los animes del lote fueron filtrados como duplicados, pasar al siguiente lote
+      if (batch.length === 0) {
+        console.log('⏩ Lote completo de duplicados, pasando al siguiente...')
+        continue
+      }
       const franchises = await getFranchisesBatch(batch)
 
+      // Crear un conjunto para controlar duplicados dentro del mismo lote
+      const processedMalIds = new Set<number>()
+
       const promises = batch.map(async (anime) => {
+        // Asignar franquicia desde la respuesta de GPT
         anime.franchise = franchises[anime.title] || 'Unknown'
-        const existingAnime = await prisma.anime.findUnique({ where: { mal_id: anime.mal_id } })
 
-        if (existingAnime) {
-          const hasChanges =
-            existingAnime.title !== anime.title ||
-            existingAnime.image !== anime.image ||
-            existingAnime.status !== anime.status ||
-            existingAnime.score !== anime.score ||
-            existingAnime.year !== anime.year
-
-          if (hasChanges) {
-            console.log(`🔄 Actualizando anime: ${anime.title} | Franquicia: ${anime.franchise}`)
-            return prisma.anime.update({ where: { mal_id: anime.mal_id }, data: anime })
+        try {
+          // Verificar si el mal_id ya fue procesado en este lote
+          if (processedMalIds.has(anime.mal_id)) {
+            console.warn(
+              `⚠️ Anime duplicado en el lote actual (mal_id: ${anime.mal_id}). Saltando...`
+            )
+            return null
           }
-        } else {
-          console.log(`🆕 Insertando nuevo anime: ${anime.title} | Franquicia: ${anime.franchise}`)
-          try {
+
+          // Marcar este mal_id como procesado
+          processedMalIds.add(anime.mal_id)
+
+          // Verificar si ya existe en la base de datos
+          const existingAnime = await prisma.anime.findUnique({ where: { mal_id: anime.mal_id } })
+
+          if (existingAnime) {
+            const hasChanges =
+              existingAnime.title !== anime.title ||
+              existingAnime.image !== anime.image ||
+              existingAnime.status !== anime.status ||
+              existingAnime.score !== anime.score ||
+              existingAnime.year !== anime.year
+
+            if (hasChanges) {
+              console.log(`🔄 Actualizando anime: ${anime.title} | Franquicia: ${anime.franchise}`)
+              return prisma.anime.update({ where: { mal_id: anime.mal_id }, data: anime })
+            }
+            return null // No requiere cambios
+          } else {
+            console.log(
+              `🆕 Insertando nuevo anime: ${anime.title} | Franquicia: ${anime.franchise}`
+            )
             return prisma.anime.create({
               data: {
                 mal_id: anime.mal_id,
@@ -169,25 +213,32 @@ async function fetchAndInsertAnimes() {
                 demographics: anime.demographics,
               },
             })
-          } catch (error) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-              // P2002 = Unique constraint failed
-              if (error.code === 'P2002') {
-                console.error(
-                  `❌ Se detectó un registro duplicado en mal_id: ${anime.mal_id}. Saltando...`
-                )
-                // Aquí decides si:
-                // - saltas (no haces nada), o
-                // - actualizas el registro, etc.
-              }
-            }
-            // Si el error es otro, lo relanzas (o lo manejas de otra forma)
-            throw error
           }
+        } catch (error) {
+          if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            // P2002 = Unique constraint failed
+            if (error.code === 'P2002') {
+              console.error(
+                `❌ Se detectó un registro duplicado en mal_id: ${anime.mal_id}. Saltando...`
+              )
+              return null
+            }
+          }
+          // Registrar el error pero no detener el proceso completo
+          console.error(`❌ Error al procesar anime ${anime.title}:`, error)
+          return null
         }
       })
 
-      await Promise.all(promises) // 🚀 Ejecutar operaciones en paralelo
+      // Filtrar resultados nulos o rechazados para que no detengan el proceso
+      const results = await Promise.allSettled(promises)
+
+      // Reportar errores pero continuar con la ejecución
+      results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          console.error(`❌ Error en promesa ${index}:`, result.reason)
+        }
+      })
     }
 
     const progress = ((page / totalPages) * 100).toFixed(2)
@@ -206,6 +257,9 @@ async function main() {
     // await getAvailableModels()
   } catch (e) {
     console.error('❌ Error al poblar la base de datos:', e)
+    console.error(
+      'El proceso se detuvo con error, pero los datos guardados anteriormente permanecen en la base de datos.'
+    )
     process.exit(1)
   } finally {
     await prisma.$disconnect()
