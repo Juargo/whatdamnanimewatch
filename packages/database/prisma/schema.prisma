@@ -64,6 +64,7 @@ model Franquicia {
   id_franquicia Int     @id @default(autoincrement())
   nombre        String  @unique
   descripcion   String?
+  imagen        String?
 
   // Ejemplo: si quieres enlazar animes que pertenecen a una franquicia
   // animes       Anime[]  // => se usaría si enlazas por foreign key en Anime

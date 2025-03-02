@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "scripts": {
     "migrate": "prisma migrate dev",
-    "fetch-animes": "tsx scripts/fetchAnimes.ts"
+    "fetch-animes": "tsx scripts/fetchAnimes.ts",
+    "parse-animes": "tsx scripts/parseAnimes.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",
