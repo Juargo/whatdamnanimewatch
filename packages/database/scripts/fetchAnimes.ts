@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Prisma } from '@prisma/client'
 import pLimit from 'p-limit'
 import OpenAI from 'openai'
 import * as dotenv from 'dotenv'
@@ -18,15 +18,15 @@ const API_BASE_URL = 'https://api.jikan.moe/v4/anime?'
 const limit = pLimit(3) // 🔹 Límite de concurrencia (3 solicitudes por segundo)
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-async function getAvailableModels() {
-  try {
-    const response = await openai.models.list()
-    console.log('✅ Modelos disponibles en tu cuenta:')
-    response.data.forEach((model) => console.log(model.id))
-  } catch (error) {
-    console.error('❌ Error obteniendo modelos:', error)
-  }
-}
+// async function getAvailableModels() {
+//   try {
+//     const response = await openai.models.list()
+//     console.log('✅ Modelos disponibles en tu cuenta:')
+//     response.data.forEach((model) => console.log(model.id))
+//   } catch (error) {
+//     console.error('❌ Error obteniendo modelos:', error)
+//   }
+// }
 
 async function getFranchisesBatch(animes: MyAnimeData[]): Promise<Record<string, string>> {
   await sleep(500)
@@ -110,7 +110,7 @@ async function fetchAndInsertAnimes() {
     '🔍 OpenAI API Key:',
     process.env.OPENAI_API_KEY ? 'Cargado correctamente' : 'No encontrado'
   )
-  let page = 1
+  let page = 1065
   let hasNextPage = true
   let totalPages = 1
 
@@ -151,7 +151,39 @@ async function fetchAndInsertAnimes() {
           }
         } else {
           console.log(`🆕 Insertando nuevo anime: ${anime.title} | Franquicia: ${anime.franchise}`)
-          return prisma.anime.create({ data: anime })
+          try {
+            return prisma.anime.create({
+              data: {
+                mal_id: anime.mal_id,
+                url: anime.url,
+                title: anime.title,
+                franchise: anime.franchise,
+                image: anime.image,
+                type: anime.type,
+                episodes: anime.episodes,
+                status: anime.status,
+                score: anime.score,
+                synopsis: anime.synopsis,
+                year: anime.year,
+                genres: anime.genres,
+                demographics: anime.demographics,
+              },
+            })
+          } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+              // P2002 = Unique constraint failed
+              if (error.code === 'P2002') {
+                console.error(
+                  `❌ Se detectó un registro duplicado en mal_id: ${anime.mal_id}. Saltando...`
+                )
+                // Aquí decides si:
+                // - saltas (no haces nada), o
+                // - actualizas el registro, etc.
+              }
+            }
+            // Si el error es otro, lo relanzas (o lo manejas de otra forma)
+            throw error
+          }
         }
       })
 
