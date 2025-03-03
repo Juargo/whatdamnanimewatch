@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/cors": "^10.0.2",
-    "@prisma/client": "^4.8.0",
+    "@prisma/client": "^6.4.1",
     "@whatdamnanimewatch/shared": "workspace:*",
     "fastify": "^5.2.1"
   },

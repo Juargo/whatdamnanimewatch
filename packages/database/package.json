@@ -4,7 +4,8 @@
   "scripts": {
     "migrate": "prisma migrate dev",
     "fetch-animes": "tsx scripts/fetchAnimes.ts",
-    "parse-animes": "tsx scripts/parseAnimes.ts"
+    "parse-animes": "tsx scripts/parseAnimes.ts",
+    "update-animes": "tsx scripts/updateAnimes.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",

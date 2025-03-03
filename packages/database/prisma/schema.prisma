@@ -31,6 +31,8 @@ model Anime {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  id_franquicia Int         @default(1)
+  franquicia    Franquicia? @relation(fields: [id_franquicia], references: [id_franquicia])
   // ======================================
   // Ejemplos de posibles relaciones nuevas
   // ======================================
@@ -67,7 +69,7 @@ model Franquicia {
   imagen        String?
 
   // Ejemplo: si quieres enlazar animes que pertenecen a una franquicia
-  // animes       Anime[]  // => se usaría si enlazas por foreign key en Anime
+  animes Anime[] // => se usaría si enlazas por foreign key en Anime
 }
 
 model Genero {

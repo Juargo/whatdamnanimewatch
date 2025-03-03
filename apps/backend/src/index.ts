@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Fastify from 'fastify'
 import cors, { FastifyCorsOptions } from '@fastify/cors'
 import { PrismaClient } from '@prisma/client'
@@ -11,6 +14,57 @@ const corsOptions: FastifyCorsOptions = {
 }
 
 app.register(cors, corsOptions)
+
+// ========================================
+// Ruta para obtener franquicias con paginación y conteo de animes
+// ========================================
+app.get('/api/franchises', async (request, reply) => {
+  try {
+    // Leer "page" y "limit" de la query
+    const { page = 1, limit = 10 } = request.query as { page?: number; limit?: number }
+
+    const skip = (Number(page) - 1) * Number(limit)
+
+    // Contar cuántas franquicias hay en total (para paginación)
+    const total = await prisma.franquicia.count()
+
+    // Obtener las franquicias, incluyendo el conteo de "animes"
+    // gracias al 'include: { _count: { select: { animes: true } } }'
+    const franchises = await prisma.franquicia.findMany({
+      skip,
+      take: Number(limit),
+      orderBy: { id_franquicia: 'asc' },
+      include: {
+        _count: {
+          select: {
+            animes: true,
+          },
+        },
+      },
+    })
+
+    reply.send({
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      totalPages: Math.ceil(total / Number(limit)),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      data: franchises.map((fr: any) => {
+        return {
+          id: fr.id_franquicia,
+          nombre: fr.nombre,
+          url: fr.url,
+          // otros campos que tengas en la tabla
+          // ...
+          cantidadAnimes: fr._count.animes,
+        }
+      }),
+    })
+  } catch (error) {
+    console.error('Error al obtener franquicias:', error)
+    reply.status(500).send({ error: 'Error interno del servidor' })
+  }
+})
 
 // Ruta para obtener la lista de animes
 app.get('/api/animes', async (request, reply) => {
