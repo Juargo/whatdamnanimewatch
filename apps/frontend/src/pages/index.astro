@@ -1,7 +1,8 @@
 ---
 // src/pages/index.astro
 // import AnimeList from '../components/AnimeList'
-import FranquiciaList from '../components/FranquiciaList'
+// import FranquiciaList from '../components/FranquiciaList'
+import FranchisePage from '../components/FranchisePage'
 import '../styles/global.css'
 ---
 
@@ -10,9 +11,6 @@ import '../styles/global.css'
     <title>What Damn Anime Watch</title>
   </head>
   <body class="bg-blue-100">
-    <div class="mx-auto p-3">
-      <h1 class="text-center text-3xl font-bold text-gray-900 mb-6">Lista de Animes</h1>
-      <FranquiciaList client:load />
-    </div>
+    <FranchisePage client:visible />
   </body>
 </html>

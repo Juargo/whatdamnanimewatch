@@ -66,6 +66,23 @@ app.get('/api/franchises', async (request, reply) => {
   }
 })
 
+app.get('/api/allAnimesFranchiesById', async (request, reply) => {
+  console.log('request.query:', request.query)
+  try {
+    const { id_franquicia } = request.query as { id_franquicia: number }
+
+    const animes = await prisma.anime.findMany({
+      where: {
+        id_franquicia: +id_franquicia,
+      },
+    })
+
+    reply.send(animes)
+  } catch (error) {
+    console.error('Error al obtener franquicias:', error)
+    reply.status(500).send({ error: 'Error interno del servidor' })
+  }
+})
 // Ruta para obtener la lista de animes
 app.get('/api/animes', async (request, reply) => {
   try {
