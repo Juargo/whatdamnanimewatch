@@ -53,7 +53,7 @@ app.get('/api/franchises', async (request, reply) => {
         return {
           id: fr.id_franquicia,
           nombre: fr.nombre,
-          url: fr.url,
+          imagen: fr.imagen,
           // otros campos que tengas en la tabla
           // ...
           cantidadAnimes: fr._count.animes,
