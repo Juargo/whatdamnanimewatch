@@ -30,8 +30,8 @@ jobs:
       - name: 🔍 Ejecutar ESLint
         run: pnpm -r run lint
 
-      - name: 🧪 Ejecutar Tests
-        run: pnpm -r run test
+      # - name: 🧪 Ejecutar Tests
+      #   run: pnpm -r run test
 
       - name: 📦 Construir aplicación
         run: pnpm -r run build

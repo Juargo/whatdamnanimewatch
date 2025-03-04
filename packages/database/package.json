@@ -3,15 +3,20 @@
   "version": "0.0.1",
   "scripts": {
     "migrate": "prisma migrate dev",
-    "fetch-animes": "tsx scripts/fetchAnimes.ts"
+    "fetch-animes": "tsx scripts/fetchAnimes.ts",
+    "parse-animes": "tsx scripts/parseAnimes.ts",
+    "update-animes": "tsx scripts/updateAnimes.ts"
   },
   "dependencies": {
-    "@prisma/client": "^6.3.1",
+    "@prisma/client": "^6.4.1",
     "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "openai": "^4.83.0",
     "p-limit": "^6.2.0"
   },
   "devDependencies": {
     "@types/axios": "^0.14.4",
-    "prisma": "^6.3.1"
+    "husky": "^9.1.7",
+    "prisma": "^6.4.1"
   }
 }

@@ -1,0 +1,18 @@
+---
+export let title: string = ''
+export let image: string = ''
+export let type: string = ''
+export let year: number = 0
+export let score: number = 0
+export let status: string = ''
+---
+
+<div class="bg-white rounded-2xl p-4 shadow-lg">
+  <img src={image} alt={title} class="w-full h-40 object-cover rounded-xl" />
+  <h3 class="text-lg font-bold mt-2">{title}</h3>
+  <p class="text-sm text-gray-600">{type} • {year}</p>
+  <p class="text-sm font-semibold text-gray-800">⭐ {score}</p>
+  <p class={`text-xs font-semibold ${status === 'Airing' ? 'text-green-500' : 'text-red-500'}`}>
+    {status}
+  </p>
+</div>

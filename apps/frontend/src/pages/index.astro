@@ -1,36 +1,16 @@
 ---
-// Component Imports
-import Counter from '../components/Counter'
-const someProps = {
-  count: 0,
-}
-
-// Full Astro Component Syntax:
-// https://docs.astro.build/basics/astro-components/
+// src/pages/index.astro
+// import AnimeList from '../components/AnimeList'
+// import FranquiciaList from '../components/FranquiciaList'
+import FranchisePage from '../components/FranchisePage'
+import '../styles/global.css'
 ---
 
-<html lang="en">
+<html>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <style>
-      html,
-      body {
-        font-family: system-ui;
-        margin: 0;
-      }
-      body {
-        padding: 2rem;
-      }
-    </style>
+    <title>What Damn Anime Watch</title>
   </head>
-  <body>
-    <main>
-      <Counter {...someProps} client:visible>
-        <h1>Hello, React!</h1>
-      </Counter>
-    </main>
+  <body class="bg-blue-100">
+    <FranchisePage client:visible />
   </body>
 </html>

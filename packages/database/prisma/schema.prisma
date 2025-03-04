@@ -1,5 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,11 +10,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ========================================================
+// 1. Tu tabla "Anime" (sin cambios en los campos existentes)
+// ========================================================
 model Anime {
   id           String   @id @default(uuid())
   mal_id       Int?     @unique
   url          String?
   title        String
+  franchise    String?
   image        String   @default("")
   type         String
   episodes     Int      @default(0)
@@ -25,4 +30,113 @@ model Anime {
   demographics String   @default("")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  id_franquicia Int         @default(1)
+  franquicia    Franquicia? @relation(fields: [id_franquicia], references: [id_franquicia])
+  // ======================================
+  // Ejemplos de posibles relaciones nuevas
+  // ======================================
+
+  //  (A) Relación con "Franquicia" (opcional)
+  //  Si quisieras enlazar la franquicia de MAL a tu tabla Franquicia.
+  //  Deberías agregar una clave foránea:
+  //    franchiseId Int? // <- Nuevo campo
+  //    franquicia  Franquicia? @relation(fields: [franchiseId], references: [id_franquicia])
+
+  //  (B) Relación con "Genero" (opcional, muchos-a-muchos)
+  //  Podrías mapear tus "genres" de MAL a la tabla "Genero" con una tabla puente:
+  //    AnimeGenero
+  generos AnimeGenero[]
+
+  //  Lo mismo aplicaría para "demographics" -> "Demografia".
+  demografias AnimeDemografia[]
+
+  //  (C) Relación con "Pais", si te interesa guardar el país de origen
+  //  o el país de transmisión. Iría también en una tabla intermedia.
+
+  //  De momento, lo dejamos en comentarios para mostrar la idea.
+  paises AnimePais[]
+}
+
+// ===============================
+// 2. Tablas relacionales nuevas
+// ===============================
+
+model Franquicia {
+  id_franquicia Int     @id @default(autoincrement())
+  nombre        String  @unique
+  descripcion   String?
+  imagen        String?
+
+  // Ejemplo: si quieres enlazar animes que pertenecen a una franquicia
+  animes Anime[] // => se usaría si enlazas por foreign key en Anime
+}
+
+model Genero {
+  id_genero   Int     @id @default(autoincrement())
+  nombre      String  @unique
+  descripcion String?
+
+  animes AnimeGenero[] // Relación muchos-a-muchos (vía tabla puente)
+}
+
+model Demografia {
+  id_demografia Int     @id @default(autoincrement())
+  nombre        String  @unique
+  descripcion   String?
+
+  animes AnimeDemografia[] // Relación muchos-a-muchos o 1-a-muchos
+}
+
+model Pais {
+  id_pais Int    @id @default(autoincrement())
+  nombre  String @unique
+
+  animes AnimePais[] // Opposite relation field
+}
+
+// ============================================
+// 3. Ejemplo de tablas intermedias (opcional)
+// ============================================
+//
+// Estas tablas sirven para mapear relaciones muchos-a-muchos.
+// Por ejemplo, si quieres mapear "genres" (string) a la tabla "Genero" 
+// de forma relacional. 
+//
+// Lo mismo aplicarías para "demographics" (string) a "Demografia", 
+// o si deseas guardar un Anime en varios "Pais" (co-producción, etc.).
+
+// 3.1. Tabla puente AnimeGenero
+model AnimeGenero {
+  id_anime  String // -> Anime.id (String)
+  id_genero Int // -> Genero.id_genero (Int)
+
+  // Relaciones
+  anime  Anime  @relation(fields: [id_anime], references: [id])
+  genero Genero @relation(fields: [id_genero], references: [id_genero])
+
+  // Compound primary key
+  @@id([id_anime, id_genero])
+}
+
+// 3.2. Tabla puente AnimeDemografia
+model AnimeDemografia {
+  id_anime      String
+  id_demografia Int
+
+  anime      Anime      @relation(fields: [id_anime], references: [id])
+  demografia Demografia @relation(fields: [id_demografia], references: [id_demografia])
+
+  @@id([id_anime, id_demografia])
+}
+
+// 3.3. Tabla puente AnimePais
+model AnimePais {
+  id_anime String
+  id_pais  Int
+
+  anime Anime @relation(fields: [id_anime], references: [id])
+  pais  Pais  @relation(fields: [id_pais], references: [id_pais])
+
+  @@id([id_anime, id_pais])
 }
