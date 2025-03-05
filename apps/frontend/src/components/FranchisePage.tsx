@@ -57,13 +57,30 @@ function FranchisePage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       {/* Columna grande con la lista de franquicias */}
-      <div style={{ flex: 2, borderRight: '1px solid #ccc', padding: '1rem' }}>
+      <div
+        style={{
+          flex: 2,
+          borderRight: '1px solid #ccc',
+          padding: '1rem',
+          overflowY: 'auto',
+          height: '100vh',
+        }}
+      >
         <h2>Franquicias</h2>
         <FranchiseList franchises={franchises} onSelectFranchise={handleSelectFranchise} />
       </div>
 
       {/* Columna más pequeña con los animes de la franquicia seleccionada */}
-      <div style={{ flex: 1, padding: '1rem' }}>
+      <div
+        style={{
+          flex: 1,
+          padding: '1rem',
+          position: 'sticky',
+          top: 0,
+          height: '100vh',
+          overflowY: 'auto',
+        }}
+      >
         <h2>
           {selectedFranchise
             ? `Animes de ${selectedFranchise.nombre}`

@@ -20,10 +20,10 @@ function FranchiseCard({ franchise, onClick, className }: FranchiseCardProps) {
       <img
         src={franchise.imagen}
         alt={franchise.nombre}
-        className="w-full h-32 object-cover rounded-md"
+        className="w-full h-30 object-cover rounded-md"
       />
       <h3 className="text-lg font-bold mt-2">{franchise.nombre}</h3>
-      <p className="text-xl text-gray-500">{franchise.cantidadAnimes} animes</p>
+      <p className="text-lg text-gray-500">{franchise.cantidadAnimes} animes</p>
     </div>
   )
 }
