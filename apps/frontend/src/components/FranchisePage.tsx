@@ -13,11 +13,6 @@ interface Franchise {
   cantidadAnimes: number
 }
 
-// interface FranchiseListProps {
-//   franchises: Franchise[]
-//   onSelectFranchise: (franchise: Franchise) => void
-// }
-
 function FranchisePage() {
   const [franchises, setFranchises] = useState([])
   const [selectedFranchise, setSelectedFranchise] = useState<Franchise | null>(null)
