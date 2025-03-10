@@ -17,21 +17,33 @@ function FranchisePage() {
   const [franchises, setFranchises] = useState([])
   const [selectedFranchise, setSelectedFranchise] = useState<Franchise | null>(null)
   const [animes, setAnimes] = useState([])
+  const [selectedLetter, setSelectedLetter] = useState<string | null>(null)
 
   // 1. Al montar el componente, cargamos todas las franquicias
   useEffect(() => {
-    async function fetchFranchises() {
-      try {
-        const res = await fetch('http://localhost:3000/api/franchises?page=1&limit=100')
-        // o la ruta que uses
-        const data = await res.json()
-        setFranchises(data.data) // asumiendo la respuesta tiene { data: [ ... ] }
-      } catch (err) {
-        console.error('Error fetching franchises:', err)
-      }
-    }
     fetchFranchises().catch((err) => console.error('Error in fetchFranchises:', err))
   }, [])
+
+  // Función para obtener franquicias, con opción de filtrar por letra
+  async function fetchFranchises(letter?: string) {
+    try {
+      let url = 'http://localhost:3000/api/franchises?page=1&limit=100'
+      if (letter) {
+        url = `http://localhost:3000/api/franchises?letra=${letter.toLowerCase()}`
+      }
+      const res = await fetch(url)
+      const data = await res.json()
+      setFranchises(data.data) // asumiendo la respuesta tiene { data: [ ... ] }
+    } catch (err) {
+      console.error('Error fetching franchises:', err)
+    }
+  }
+
+  // Manejador para seleccionar una letra
+  const handleLetterClick = async (letter: string) => {
+    setSelectedLetter(letter)
+    await fetchFranchises(letter)
+  }
 
   // 2. Manejo de selección de franquicia
   const handleSelectFranchise = async (franchise: Franchise | null) => {
@@ -49,9 +61,80 @@ function FranchisePage() {
     }
   }
 
+  // Genera los botones de letras para la columna de la izquierda
+  const renderAlphabetButtons = () => {
+    const letters = [
+      '#',
+      'A',
+      'B',
+      'C',
+      'D',
+      'E',
+      'F',
+      'G',
+      'H',
+      'I',
+      'J',
+      'K',
+      'L',
+      'M',
+      'N',
+      'O',
+      'P',
+      'Q',
+      'R',
+      'S',
+      'T',
+      'U',
+      'V',
+      'W',
+      'X',
+      'Y',
+      'Z',
+    ]
+
+    return letters.map((letter) => (
+      <button
+        key={letter}
+        onClick={() => handleLetterClick(letter)}
+        className={`letter-button ${selectedLetter === letter ? 'selected' : ''}`}
+        style={{
+          display: 'block',
+          width: '100%',
+          padding: '8px 0',
+          margin: '4px 0',
+          textAlign: 'center',
+          backgroundColor: selectedLetter === letter ? '#3b82f6' : '#e5e7eb',
+          color: selectedLetter === letter ? 'white' : 'black',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          fontWeight: selectedLetter === letter ? 'bold' : 'normal',
+        }}
+      >
+        {letter}
+      </button>
+    ))
+  }
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      {/* Columna grande con la lista de franquicias */}
+      {/* Nueva columna con letras */}
+      <div
+        style={{
+          flex: 0.5,
+          borderRight: '1px solid #ccc',
+          padding: '1rem',
+          overflowY: 'auto',
+          height: '100vh',
+          backgroundColor: '#f3f4f6',
+        }}
+      >
+        <h3 style={{ textAlign: 'center', marginBottom: '1rem' }}>Filtrar</h3>
+        {renderAlphabetButtons()}
+      </div>
+
+      {/* Columna con la lista de franquicias */}
       <div
         style={{
           flex: 2,
@@ -61,11 +144,11 @@ function FranchisePage() {
           height: '100vh',
         }}
       >
-        <h2>Franquicias</h2>
+        <h2>Franquicias {selectedLetter ? `- ${selectedLetter}` : ''}</h2>
         <FranchiseList franchises={franchises} onSelectFranchise={handleSelectFranchise} />
       </div>
 
-      {/* Columna más pequeña con los animes de la franquicia seleccionada */}
+      {/* Columna con los animes de la franquicia seleccionada */}
       <div
         style={{
           flex: 1,
