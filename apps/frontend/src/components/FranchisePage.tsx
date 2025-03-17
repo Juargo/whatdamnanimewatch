@@ -13,27 +13,52 @@ interface Franchise {
   cantidadAnimes: number
 }
 
+interface PaginationInfo {
+  totalItems: number
+  totalPages: number
+  currentPage: number
+  itemsPerPage: number
+}
+
 function FranchisePage() {
   const [franchises, setFranchises] = useState([])
   const [selectedFranchise, setSelectedFranchise] = useState<Franchise | null>(null)
   const [animes, setAnimes] = useState([])
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null)
 
+  // Nuevos estados para la paginación
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    totalItems: 0,
+    totalPages: 1,
+    currentPage: 1,
+    itemsPerPage: 10,
+  })
+
   // 1. Al montar el componente, cargamos todas las franquicias
   useEffect(() => {
     fetchFranchises().catch((err) => console.error('Error in fetchFranchises:', err))
   }, [])
 
-  // Función para obtener franquicias, con opción de filtrar por letra
-  async function fetchFranchises(letter?: string) {
+  // Función para obtener franquicias, con paginación y filtrado opcional por letra
+  async function fetchFranchises(letter?: string, page = 1, limit = pagination.itemsPerPage) {
     try {
-      let url = 'http://localhost:3000/api/franchises?page=1&limit=100'
+      let url = `http://localhost:3000/api/franchises?page=${page}&limit=${limit}`
       if (letter) {
-        url = `http://localhost:3000/api/franchises?letra=${letter.toLowerCase()}`
+        url = `http://localhost:3000/api/franchises?letra=${letter.toLowerCase()}&page=${page}&limit=${limit}`
       }
+
       const res = await fetch(url)
       const data = await res.json()
-      setFranchises(data.data) // asumiendo la respuesta tiene { data: [ ... ] }
+
+      setFranchises(data.data)
+
+      // Actualiza la información de paginación
+      setPagination({
+        totalItems: data.total || data.data.length,
+        totalPages: data.totalPages || Math.ceil((data.total || data.data.length) / limit),
+        currentPage: page,
+        itemsPerPage: limit,
+      })
     } catch (err) {
       console.error('Error fetching franchises:', err)
     }
@@ -42,7 +67,26 @@ function FranchisePage() {
   // Manejador para seleccionar una letra
   const handleLetterClick = async (letter: string) => {
     setSelectedLetter(letter)
-    await fetchFranchises(letter)
+    await fetchFranchises(letter, 1) // Resetea a la página 1 cuando se cambia la letra
+  }
+
+  // Manejadores para la navegación de páginas
+  const handlePreviousPage = async () => {
+    if (pagination.currentPage > 1) {
+      await fetchFranchises(selectedLetter || undefined, pagination.currentPage - 1)
+    }
+  }
+
+  const handleNextPage = async () => {
+    if (pagination.currentPage < pagination.totalPages) {
+      await fetchFranchises(selectedLetter || undefined, pagination.currentPage + 1)
+    }
+  }
+
+  // Manejador para cambiar el número de items por página
+  const handleItemsPerPageChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLimit = parseInt(e.target.value, 10)
+    await fetchFranchises(selectedLetter || undefined, 1, newLimit)
   }
 
   // 2. Manejo de selección de franquicia
@@ -117,6 +161,80 @@ function FranchisePage() {
     ))
   }
 
+  // Componente de navegación de páginas
+  const renderPagination = () => {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginTop: '1rem',
+          padding: '0.5rem',
+          backgroundColor: '#f3f4f6',
+          borderRadius: '4px',
+        }}
+      >
+        <button
+          onClick={handlePreviousPage}
+          disabled={pagination.currentPage <= 1}
+          style={{
+            padding: '0.5rem 1rem',
+            backgroundColor: pagination.currentPage <= 1 ? '#d1d5db' : '#3b82f6',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: pagination.currentPage <= 1 ? 'not-allowed' : 'pointer',
+          }}
+        >
+          Anterior
+        </button>
+
+        <span>
+          Página {pagination.currentPage} de {pagination.totalPages}({pagination.totalItems}{' '}
+          franquicias)
+        </span>
+
+        <div>
+          <label htmlFor="itemsPerPage" style={{ marginRight: '0.5rem' }}>
+            Mostrar:
+          </label>
+          <select
+            id="itemsPerPage"
+            value={pagination.itemsPerPage}
+            onChange={handleItemsPerPageChange}
+            style={{
+              padding: '0.25rem',
+              marginRight: '0.5rem',
+              borderRadius: '4px',
+            }}
+          >
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+
+        <button
+          onClick={handleNextPage}
+          disabled={pagination.currentPage >= pagination.totalPages}
+          style={{
+            padding: '0.5rem 1rem',
+            backgroundColor:
+              pagination.currentPage >= pagination.totalPages ? '#d1d5db' : '#3b82f6',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: pagination.currentPage >= pagination.totalPages ? 'not-allowed' : 'pointer',
+          }}
+        >
+          Siguiente
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       {/* Nueva columna con letras */}
@@ -146,6 +264,7 @@ function FranchisePage() {
       >
         <h2>Franquicias {selectedLetter ? `- ${selectedLetter}` : ''}</h2>
         <FranchiseList franchises={franchises} onSelectFranchise={handleSelectFranchise} />
+        {renderPagination()}
       </div>
 
       {/* Columna con los animes de la franquicia seleccionada */}
